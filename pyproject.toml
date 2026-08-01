@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nbpl"
-version = "0.1.1"
+version = "0.1.2"
 description = "检测正在运行的 Python 脚本，并按地区打开对应视频。"
 readme = "README.md"
 requires-python = ">=3.9"
