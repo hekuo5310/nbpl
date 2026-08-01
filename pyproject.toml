@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "nbpl"
 version = "0.1.0"
-description = "Open a region-specific video when another Python script is running."
+description = "检测正在运行的 Python 脚本，并按地区打开对应视频。"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
