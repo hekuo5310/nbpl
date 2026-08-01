@@ -1,4 +1,4 @@
-"""Command-line interface for nbpl."""
+"""nbpl 的命令行入口。"""
 
 from __future__ import annotations
 
@@ -9,17 +9,17 @@ from .watcher import watch
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Open a region-specific video when a Python script is running."
+        description="检测到 Python 脚本运行时，按所在地区打开对应的视频。"
     )
     parser.add_argument(
         "--interval",
         type=float,
         default=1.0,
-        help="seconds between process checks (default: 1)",
+        help="进程检查间隔（秒），默认：1",
     )
     parser.add_argument(
         "--country-code",
-        help="override public-IP detection, useful for testing (for example CN)",
+        help="覆盖公网 IP 地区检测，适合测试，例如 CN",
     )
     args = parser.parse_args()
     watch(interval=args.interval, country_code=args.country_code)
