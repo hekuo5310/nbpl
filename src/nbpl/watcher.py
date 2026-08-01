@@ -1,4 +1,4 @@
-"""Process watching and country detection for nbpl."""
+"""nbpl 的进程监控与地区检测逻辑。"""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ IP_API_URL = "https://ipapi.co/json/"
 
 @dataclass(frozen=True)
 class ScriptProcess:
-    """A running Python interpreter associated with a ``.py`` file."""
+    """一个关联到 Python 源文件的运行中 Python 解释器。"""
 
     pid: int
     script: str
@@ -28,7 +28,7 @@ def _is_python_interpreter(executable: str) -> bool:
 
 
 def _script_from_cmdline(cmdline: list[str]) -> Optional[str]:
-    """Return the first direct .py argument after a Python interpreter."""
+    """从 Python 解释器的命令行中返回第一个直接传入的源文件。"""
     if not cmdline or not _is_python_interpreter(cmdline[0]):
         return None
 
@@ -39,11 +39,11 @@ def _script_from_cmdline(cmdline: list[str]) -> Optional[str]:
 
 
 def find_running_python_scripts() -> list[ScriptProcess]:
-    """List other running processes that execute a Python source file."""
+    """列出正在执行 Python 源文件的其他进程。"""
     try:
         import psutil
-    except ImportError as exc:  # pragma: no cover - dependency is installed normally
-        raise RuntimeError("nbpl requires psutil; reinstall the package") from exc
+    except ImportError as exc:
+        raise RuntimeError("nbpl 依赖 psutil，请重新安装本包") from exc
 
     found: list[ScriptProcess] = []
     this_pid = os.getpid()
@@ -62,11 +62,11 @@ def find_running_python_scripts() -> list[ScriptProcess]:
 
 
 def detect_country_code(timeout: float = 5.0) -> Optional[str]:
-    """Return the public IP country code, or ``None`` if it cannot be determined."""
+    """返回公网 IP 的国家/地区代码；无法判断时返回 None。"""
     try:
         import requests
-    except ImportError as exc:  # pragma: no cover - dependency is installed normally
-        raise RuntimeError("nbpl requires requests; reinstall the package") from exc
+    except ImportError as exc:
+        raise RuntimeError("nbpl 依赖 requests，请重新安装本包") from exc
 
     try:
         response = requests.get(IP_API_URL, timeout=timeout)
@@ -78,17 +78,16 @@ def detect_country_code(timeout: float = 5.0) -> Optional[str]:
 
 
 def open_video_for_country(country_code: Optional[str]) -> str:
-    """Open and return the configured video URL for a country code."""
+    """按国家/地区代码打开并返回相应的视频 URL。"""
     url = BILIBILI_URL if country_code == "CN" else YOUTUBE_URL
     webbrowser.open(url)
     return url
 
 
 def run_once(country_code: Optional[str] = None) -> Optional[str]:
-    """Open a video once if at least one other Python script is running.
+    """发现其他 Python 脚本正在运行时，仅打开一次视频。
 
-    ``country_code`` is injectable for deterministic use and tests. If omitted,
-    nbpl discovers the country from the public IP address.
+    可传入 country_code 以方便测试；未传入时会通过公网 IP 检测。
     """
     if not find_running_python_scripts():
         return None
@@ -102,9 +101,9 @@ def watch(
     country_code: Optional[str] = None,
     on_open: Optional[Callable[[str], None]] = None,
 ) -> None:
-    """Wait for a Python script to appear, then open the video and return."""
+    """等待 Python 脚本出现，打开视频后返回。"""
     if interval <= 0:
-        raise ValueError("interval must be greater than zero")
+        raise ValueError("interval 必须大于零")
 
     while True:
         url = run_once(country_code=country_code)
