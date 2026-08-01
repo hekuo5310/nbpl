@@ -1,3 +1,5 @@
+import os
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -6,6 +8,7 @@ from nbpl.watcher import (
     YOUTUBE_URL,
     ScriptProcess,
     _script_from_cmdline,
+    maybe_open_for_current_python_script,
     open_video_for_country,
     run_once,
     watch,
@@ -49,3 +52,27 @@ class WatcherTests(unittest.TestCase):
     def test_watch_rejects_non_positive_interval(self):
         with self.assertRaises(ValueError):
             watch(interval=0, country_code="CN")
+
+    @patch("nbpl.watcher.open_video_for_country", return_value=BILIBILI_URL)
+    @patch("nbpl.watcher.detect_country_code", return_value="CN")
+    def test_current_python_file_triggers_automatically(self, detect_country, open_video):
+        original_argv = sys.argv
+        try:
+            sys.argv = ["example.py"]
+            self.assertEqual(maybe_open_for_current_python_script(), BILIBILI_URL)
+        finally:
+            sys.argv = original_argv
+        open_video.assert_called_once_with("CN")
+
+    @patch("nbpl.watcher.open_video_for_country")
+    def test_auto_open_can_be_disabled(self, open_video):
+        original = os.environ.get("NBPL_DISABLE_AUTO_OPEN")
+        os.environ["NBPL_DISABLE_AUTO_OPEN"] = "1"
+        try:
+            self.assertIsNone(maybe_open_for_current_python_script())
+        finally:
+            if original is None:
+                del os.environ["NBPL_DISABLE_AUTO_OPEN"]
+            else:
+                os.environ["NBPL_DISABLE_AUTO_OPEN"] = original
+        open_video.assert_not_called()
