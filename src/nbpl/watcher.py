@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import sys
 import time
 import webbrowser
 from dataclasses import dataclass
@@ -82,6 +83,19 @@ def open_video_for_country(country_code: Optional[str]) -> str:
     url = BILIBILI_URL if country_code == "CN" else YOUTUBE_URL
     webbrowser.open(url)
     return url
+
+
+def maybe_open_for_current_python_script() -> Optional[str]:
+    """当前解释器执行 Python 源文件时自动打开视频。
+
+    设置环境变量 NBPL_DISABLE_AUTO_OPEN=1 可关闭自动行为。
+    """
+    if os.environ.get("NBPL_DISABLE_AUTO_OPEN") == "1":
+        return None
+    script = sys.argv[0] if sys.argv else ""
+    if not script.lower().endswith((".py", ".pyw")):
+        return None
+    return open_video_for_country(detect_country_code())
 
 
 def run_once(country_code: Optional[str] = None) -> Optional[str]:
