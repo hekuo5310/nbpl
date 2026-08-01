@@ -1,41 +1,47 @@
 # nbpl
 
-`nbpl` waits until it detects another running Python process whose command line includes a `.py` or `.pyw` file. It then opens one video in the system default browser:
+`nbpl` 会持续检测是否存在正在运行、命令行中包含 `.py` 或 `.pyw` 文件的其他 Python 进程。检测到后，会使用系统默认浏览器打开一个视频：
 
-| Public IP country code | URL |
+| 公网 IP 所在国家/地区代码 | 打开的链接 |
 | --- | --- |
-| `CN` (China mainland) | https://www.bilibili.com/video/BV1GJ411x7h7 |
-| Any other value, including an unavailable lookup | https://www.youtube.com/watch?v=dQw4w9WgXcQ |
+| `CN`（中国大陆） | https://www.bilibili.com/video/BV1GJ411x7h7 |
+| 其他代码，或定位失败 | https://www.youtube.com/watch?v=dQw4w9WgXcQ |
 
-The country lookup uses `https://ipapi.co/json/`. The package only reads process command lines and makes that one IP-location request; it does not upload the detected script paths.
+地区查询使用 `https://ipapi.co/json/`。本包仅会读取进程命令行并发起一次 IP 地理位置查询；不会上传检测到的脚本路径。
 
-## Install
+## 安装
 
 ```bash
 pip install nbpl
 ```
 
-## Use
+也可以直接从本仓库安装：
 
-Start the watcher:
+```bash
+pip install git+https://github.com/hekuo5310/nbpl.git
+```
+
+## 使用
+
+启动监控器：
 
 ```bash
 nbpl
 ```
 
-Or:
+或：
 
 ```bash
 python -m nbpl
 ```
 
-The command checks once per second by default, opens the appropriate link after it finds a Python script, then exits. To use a different polling interval:
+命令默认每秒检查一次；发现 Python 脚本后打开对应链接并退出。修改检查间隔：
 
 ```bash
 nbpl --interval 2
 ```
 
-For deterministic local testing, bypass the IP lookup:
+本地测试时可跳过 IP 查询，直接指定地区：
 
 ```bash
 nbpl --country-code CN
@@ -46,6 +52,6 @@ nbpl --country-code CN
 ```python
 from nbpl import run_once, watch
 
-run_once()  # only opens a link when another Python script is already running
-watch(interval=1.0)  # waits for one, opens the link, and returns
+run_once()  # 仅当已有其他 Python 脚本在运行时才打开链接
+watch(interval=1.0)  # 等待脚本出现，打开链接后返回
 ```
