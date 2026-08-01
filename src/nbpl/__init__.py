@@ -1,4 +1,4 @@
-"""Detect running Python scripts and open the appropriate video."""
+"""检测运行中的 Python 脚本，并打开对应的视频。"""
 
 from .watcher import (
     BILIBILI_URL,
