@@ -55,10 +55,10 @@ class WatcherTests(unittest.TestCase):
 
     @patch("nbpl.watcher.open_video_for_country", return_value=BILIBILI_URL)
     @patch("nbpl.watcher.detect_country_code", return_value="CN")
-    def test_current_python_file_triggers_automatically(self, detect_country, open_video):
+    def test_any_python_start_triggers_automatically(self, detect_country, open_video):
         original_argv = sys.argv
         try:
-            sys.argv = ["example.py"]
+            sys.argv = ["-m"]
             self.assertEqual(maybe_open_for_current_python_script(), BILIBILI_URL)
         finally:
             sys.argv = original_argv
